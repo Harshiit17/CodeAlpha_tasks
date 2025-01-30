@@ -1,0 +1,33 @@
+import os
+import shutil
+
+def organize_files(directory):
+
+    for filename in os.listdir(directory):
+        if filename == _file_:  
+            continue
+
+        filepath = os.path.join(directory, filename)
+
+        if os.path.isfile(filepath):  
+            name, ext = os.path.splitext(filename)
+            ext = ext[1:]  
+
+            if ext:  
+                ext_folder = os.path.join(directory, ext)
+
+                if not os.path.exists(ext_folder):
+                    os.makedirs(ext_folder)
+
+                shutil.move(filepath, os.path.join(ext_folder, filename))
+                print(f"Moved {filename} to {ext_folder}")
+
+
+if _name_ == "_main_":
+    directory_to_organize = input("Enter the directory to organize: ")
+
+    if not os.path.exists(directory_to_organize):
+        print("Directory not found.")
+    else:
+        organize_files(directory_to_organize)
+        print("File organization complete.")
