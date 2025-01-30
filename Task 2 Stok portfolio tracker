@@ -1,0 +1,50 @@
+import yfinance as yf
+import pandas as pd
+
+class PortfolioTracker:
+    def _init_(self):
+        self.portfolio = {}  
+
+    def add_stock(self, ticker, quantity):
+        if ticker in self.portfolio:
+            self.portfolio[ticker] += quantity
+        else:
+            self.portfolio[ticker] = quantity
+        print(f"Added {quantity} shares of {ticker} to portfolio.")
+
+    def remove_stock(self, ticker, quantity):
+        if ticker not in self.portfolio:
+            print(f"Stock {ticker} not found in portfolio.")
+            return
+
+        if quantity > self.portfolio[ticker]:
+            print(f"You only have {self.portfolio[ticker]} shares of {ticker}. Cannot remove more.")
+            return
+
+        self.portfolio[ticker] -= quantity
+        if self.portfolio[ticker] == 0:
+            del self.portfolio[ticker]
+        print(f"Removed {quantity} shares of {ticker} from portfolio.")
+
+    def get_current_value(self):
+        total_value = 0
+        for ticker, quantity in self.portfolio.items():
+            try:
+                data = yf.download(ticker, period="1d")  
+                current_price = data['Close'][-1]
+                stock_value = current_price * quantity
+                total_value += stock_value
+                print(f"{ticker}: {quantity} shares x ${current_price:.2f} = ${stock_value:.2f}")
+            except Exception as e:
+                print(f"Error fetching data for {ticker}: {e}")
+        return total_value
+
+    def display_portfolio(self):
+        if not self.portfolio:
+            print("Portfolio is empty.")
+            return
+
+        print("Current Portfolio:")
+        for ticker, quantity in self.portfolio.items():
+            print(f"{ticker}: {quantity} shares")
+
